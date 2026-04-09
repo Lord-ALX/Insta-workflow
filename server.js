@@ -10,6 +10,9 @@ const API_TOKEN = process.env.API_TOKEN || process.env.TOKEN_API || "";
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
 const CORS_ORIGIN = process.env.CORS_ORIGIN || "";
 
+const TEXT_MODEL = "gemini-2.5-flash";
+const IMAGE_MODEL = "gemini-2.5-flash-image";
+
 if (!GEMINI_API_KEY) {
   console.warn("WARNING: GEMINI_API_KEY is missing.");
 }
@@ -71,8 +74,10 @@ function requireApiToken(req, res, next) {
 
 function cleanDataUrl(dataUrl) {
   if (!dataUrl || typeof dataUrl !== "string") return null;
+
   const match = dataUrl.match(/^data:(.+?);base64,(.+)$/);
   if (!match) return null;
+
   return {
     mimeType: match[1],
     data: match[2]
@@ -81,6 +86,7 @@ function cleanDataUrl(dataUrl) {
 
 function extractBase64FromGeminiResponse(response) {
   if (!response) return null;
+
   const candidates = response.candidates || [];
   for (const candidate of candidates) {
     const parts = candidate?.content?.parts || [];
@@ -90,24 +96,29 @@ function extractBase64FromGeminiResponse(response) {
       }
     }
   }
+
   return null;
 }
 
 function extractTextFromGeminiResponse(response) {
   if (!response) return "";
+
   if (typeof response.text === "string" && response.text.trim()) {
     return response.text.trim();
   }
+
   const candidates = response.candidates || [];
   for (const candidate of candidates) {
     const parts = candidate?.content?.parts || [];
     const texts = parts
       .map((part) => (typeof part?.text === "string" ? part.text : ""))
       .filter(Boolean);
+
     if (texts.length) {
       return texts.join("\n").trim();
     }
   }
+
   return "";
 }
 
@@ -124,10 +135,12 @@ function normalizeHashtags(text) {
   for (let token of tokens) {
     token = token.replace(/^#+/, "");
     token = token.replace(/[^\p{L}\p{N}_]/gu, "");
+
     if (!token) continue;
 
     const hashtag = `#${token}`;
     const key = hashtag.toLowerCase();
+
     if (!seen.has(key)) {
       seen.add(key);
       cleaned.push(hashtag);
@@ -137,10 +150,30 @@ function normalizeHashtags(text) {
   return cleaned.join(" ");
 }
 
+function getRetryDelayMessage(error) {
+  const retryInfo = error?.details?.find(
+    (d) => d?.["@type"] === "type.googleapis.com/google.rpc.RetryInfo"
+  );
+
+  if (!retryInfo?.retryDelay) return "";
+  return ` Reessayez dans ${retryInfo.retryDelay}.`;
+}
+
+function isQuotaError(error) {
+  return (
+    error?.status === 429 ||
+    error?.status === "RESOURCE_EXHAUSTED" ||
+    String(error?.message || "").includes("RESOURCE_EXHAUSTED") ||
+    String(error?.message || "").includes("quota")
+  );
+}
+
 app.get("/api/health", (req, res) => {
   res.json({
     ok: true,
     service: "insta-workflow",
+    textModel: TEXT_MODEL,
+    imageModel: IMAGE_MODEL,
     geminiConfigured: Boolean(GEMINI_API_KEY)
   });
 });
@@ -154,8 +187,11 @@ app.post("/api/generate-tags", requireApiToken, async (req, res) => {
     }
 
     const { prompt } = req.body || {};
+
     if (!prompt || !String(prompt).trim()) {
-      return res.status(400).json({ error: "Prompt manquant." });
+      return res.status(400).json({
+        error: "Prompt manquant."
+      });
     }
 
     const systemPrompt = `
@@ -173,7 +209,7 @@ Contraintes :
 `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: TEXT_MODEL,
       contents: [
         {
           role: "user",
@@ -190,38 +226,57 @@ Contraintes :
     const tags = normalizeHashtags(rawText);
 
     if (!tags) {
-      return res.status(500).json({ error: "Impossible de generer les hashtags." });
+      return res.status(500).json({
+        error: "Impossible de generer les hashtags."
+      });
     }
 
     return res.json({ tags });
   } catch (error) {
     console.error("Erreur /api/generate-tags :", error);
-    return res.status(500).json({ error: "Erreur lors de la generation des hashtags." });
+    return res.status(500).json({
+      error: "Erreur lors de la generation des hashtags."
+    });
   }
 });
 
 app.post("/api/generate-image", requireApiToken, async (req, res) => {
   try {
     if (!ai) {
-      return res.status(500).json({ error: "GEMINI_API_KEY manquant cote serveur." });
+      return res.status(500).json({
+        error: "GEMINI_API_KEY manquant cote serveur."
+      });
     }
 
-    const { productImage, logoImage, productName, promoMessage, ambiance, format } = req.body || {};
+    const {
+      productImage,
+      logoImage,
+      productName,
+      promoMessage,
+      ambiance,
+      format
+    } = req.body || {};
 
     if (!productImage || !productName || !ambiance || !format) {
-      return res.status(400).json({ error: "Champs requis manquants pour la generation d'image." });
+      return res.status(400).json({
+        error: "Champs requis manquants pour la generation d'image."
+      });
     }
 
     const productInline = cleanDataUrl(productImage);
     if (!productInline) {
-      return res.status(400).json({ error: "Image produit invalide." });
+      return res.status(400).json({
+        error: "Image produit invalide."
+      });
     }
 
     let logoInline = null;
     if (logoImage) {
       logoInline = cleanDataUrl(logoImage);
       if (!logoInline) {
-        return res.status(400).json({ error: "Logo invalide." });
+        return res.status(400).json({
+          error: "Logo invalide."
+        });
       }
     }
 
@@ -287,7 +342,7 @@ Objectif :
     }
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-image",
+      model: IMAGE_MODEL,
       contents: [
         {
           role: "user",
@@ -300,8 +355,11 @@ Objectif :
     });
 
     const imageBase64 = extractBase64FromGeminiResponse(response);
+
     if (!imageBase64) {
-      return res.status(500).json({ error: "Aucune image n'a ete retournee par Gemini." });
+      return res.status(500).json({
+        error: "Aucune image n'a ete retournee par Gemini."
+      });
     }
 
     return res.json({
@@ -309,13 +367,27 @@ Objectif :
     });
   } catch (error) {
     console.error("Erreur /api/generate-image :", error);
-    return res.status(500).json({ error: "Erreur lors de la generation de l'image." });
+
+    if (isQuotaError(error)) {
+      return res.status(429).json({
+        error:
+          "Quota Gemini image depasse ou indisponible pour ce projet." +
+          getRetryDelayMessage(error) +
+          " Verifiez la facturation, le tier Gemini du projet et les quotas du modele image."
+      });
+    }
+
+    return res.status(500).json({
+      error: "Erreur lors de la generation de l'image."
+    });
   }
 });
 
 app.use((err, req, res, next) => {
   console.error("Erreur middleware :", err);
-  return res.status(500).json({ error: err?.message || "Erreur serveur." });
+  return res.status(500).json({
+    error: err?.message || "Erreur serveur."
+  });
 });
 
 app.listen(PORT, () => {
