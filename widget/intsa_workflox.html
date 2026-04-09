@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Insta Workflow</title>
+  <style>
+    :root{--bg:#f7fafc;--bg-soft:#eef5ff;--card:#ffffff;--text:#0f172a;--muted:#64748b;--line:rgba(15,23,42,.08);--line-strong:rgba(15,23,42,.14);--blue:#2563eb;--blue-dark:#1d4ed8;--blue-soft:rgba(37,99,235,.08);--success:#16a34a;--danger:#dc2626;--shadow:0 20px 50px rgba(15,23,42,.08);--radius-xl:22px;--radius-lg:16px}
+    *{box-sizing:border-box}html,body{margin:0;padding:0}body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#fbfdff 0%,#f3f8ff 100%);color:var(--text);min-height:100vh}.container{width:min(1280px,calc(100% - 32px));margin:0 auto}.topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);background:rgba(255,255,255,.82);border-bottom:1px solid var(--line)}.topbar-inner{height:72px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:12px;min-width:0}.brand-icon{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--blue-dark));display:flex;align-items:center;justify-content:center;box-shadow:0 10px 25px rgba(37,99,235,.22);color:#fff;font-size:20px;flex:0 0 auto}.brand-title{font-size:20px;font-weight:800;letter-spacing:-.02em;line-height:1.1}.brand-subtitle{font-size:12px;color:var(--muted)}.badge{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:var(--blue-soft);color:var(--blue-dark);border:1px solid rgba(37,99,235,.12);font-size:12px;font-weight:700;white-space:nowrap}.page{padding:32px 0 48px}.layout{display:grid;grid-template-columns:490px minmax(0,1fr);gap:28px;align-items:start}.intro{margin-bottom:18px}.intro h1{margin:0 0 10px;font-size:44px;line-height:1.02;letter-spacing:-.04em}.intro h1 .accent{color:var(--blue)}.intro p{margin:0;color:var(--muted);font-size:18px;line-height:1.6}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-xl);box-shadow:var(--shadow);overflow:hidden}.card-header{padding:18px 22px;background:linear-gradient(180deg,rgba(37,99,235,.05) 0%,rgba(37,99,235,.02) 100%);border-bottom:1px solid var(--line)}.card-header-title{margin:0;font-size:12px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:rgba(15,23,42,.45)}.card-body{padding:22px}.stack-lg{display:flex;flex-direction:column;gap:24px}.row-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:flex;flex-direction:column;gap:8px}.label{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--text)}.label .icon{width:18px;text-align:center;color:var(--blue);flex:0 0 auto}.required{color:var(--danger)}input[type="text"],textarea,select{width:100%;border:1px solid var(--line-strong);border-radius:14px;background:#fff;color:var(--text);font:inherit;transition:.2s ease;outline:none}input[type="text"],select{height:48px;padding:0 14px}textarea{min-height:110px;padding:14px;resize:vertical;line-height:1.5}input[type="text"]:focus,textarea:focus,select:focus{border-color:rgba(37,99,235,.42);box-shadow:0 0 0 4px rgba(37,99,235,.10)}.upload{position:relative;border:2px dashed rgba(15,23,42,.12);border-radius:18px;background:#fff;padding:18px;transition:.2s ease;cursor:pointer;overflow:hidden}.upload:hover{border-color:rgba(37,99,235,.35);background:rgba(37,99,235,.02)}.upload.has-file{border-color:rgba(37,99,235,.45);background:rgba(37,99,235,.05)}.upload input{display:none}.upload-inner{display:flex;align-items:center;justify-content:center;min-height:118px;text-align:center;flex-direction:column;gap:10px}.upload-icon{width:52px;height:52px;border-radius:999px;background:rgba(15,23,42,.05);display:flex;align-items:center;justify-content:center;font-size:22px;color:rgba(15,23,42,.55)}.upload-title{font-size:15px;font-weight:700}.upload-subtitle{font-size:12px;color:var(--muted)}.file-preview{display:flex;align-items:center;gap:14px;min-height:78px}.thumb{width:72px;height:72px;border-radius:14px;object-fit:cover;background:#fff;border:1px solid rgba(15,23,42,.08);flex:0 0 auto}.thumb.logo{object-fit:contain;padding:6px;background:#fff}.file-meta{min-width:0;flex:1}.file-name{font-size:14px;font-weight:700;margin:0 0 4px}.file-hint{margin:0;font-size:12px;color:var(--muted)}.ok{color:var(--success);font-size:18px;flex:0 0 auto}.separator{height:1px;background:var(--line);margin:2px 0}.actions{display:flex;gap:12px;flex-wrap:wrap}.btn{appearance:none;border:none;border-radius:16px;padding:14px 18px;font:inherit;font-weight:800;cursor:pointer;transition:.2s ease;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px}.btn:disabled{opacity:.55;cursor:not-allowed}.btn-primary{color:#fff;background:linear-gradient(135deg,var(--blue),var(--blue-dark));box-shadow:0 16px 28px rgba(37,99,235,.22)}.btn-primary:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.02)}.btn-secondary{color:var(--blue-dark);background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.14)}.btn-secondary:hover:not(:disabled){background:rgba(37,99,235,.12)}.btn-full{width:100%}.preview-shell{display:flex;flex-direction:column;gap:22px}.preview-card{background:#fff;border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);overflow:hidden;min-height:640px;display:flex;flex-direction:column}.preview-header{padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(37,99,235,.03) 0%,rgba(37,99,235,0) 100%)}.preview-title{margin:0;font-size:18px;font-weight:800;letter-spacing:-.02em}.preview-subtitle{margin:4px 0 0;font-size:13px;color:var(--muted)}.preview-body{flex:1;padding:22px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at top left,rgba(37,99,235,.05),transparent 30%),radial-gradient(circle at bottom right,rgba(29,78,216,.04),transparent 30%),#fff}.empty-state{max-width:500px;text-align:center;display:flex;flex-direction:column;gap:16px;align-items:center;justify-content:center;color:var(--muted)}.empty-state-icon{width:84px;height:84px;border-radius:24px;background:rgba(37,99,235,.08);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:34px}.empty-state h3{margin:0;color:var(--text);font-size:22px;letter-spacing:-.02em}.empty-state p{margin:0;font-size:15px;line-height:1.7}.result-image{width:100%;max-width:860px;max-height:72vh;object-fit:contain;border-radius:22px;border:1px solid rgba(15,23,42,.08);box-shadow:0 20px 50px rgba(15,23,42,.12);background:#fff}.loading-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;max-width:420px}.spinner{width:58px;height:58px;border-radius:999px;border:4px solid rgba(37,99,235,.12);border-top-color:var(--blue);animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.loading-wrap h3{margin:0;font-size:22px;letter-spacing:-.02em}.loading-wrap p{margin:0;color:var(--muted);line-height:1.6;font-size:14px}.preview-footer{border-top:1px solid var(--line);padding:18px 22px;display:flex;gap:12px;flex-wrap:wrap;background:#fff}.tags-card{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}.tags-head{padding:18px 22px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(37,99,235,.03) 0%,rgba(37,99,235,0) 100%);display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}.tags-head h3{margin:0;font-size:18px;font-weight:800;letter-spacing:-.02em}.tags-head p{margin:4px 0 0;color:var(--muted);font-size:13px}.tags-body{padding:22px}.tags-output{min-height:128px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,#fff 0%,#f8fbff 100%);padding:18px;font-size:15px;line-height:1.8;white-space:pre-wrap;word-break:break-word}.tags-output.empty{color:var(--muted);display:flex;align-items:center;justify-content:center;text-align:center}.tips{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}.tip{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:0 12px 28px rgba(15,23,42,.05)}.tip-icon{width:42px;height:42px;border-radius:14px;background:rgba(37,99,235,.08);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:14px}.tip h4{margin:0 0 8px;font-size:16px;letter-spacing:-.02em}.tip p{margin:0;color:var(--muted);font-size:14px;line-height:1.65}.notice{border:1px solid rgba(220,38,38,.16);background:rgba(220,38,38,.05);color:#991b1b;padding:14px 16px;border-radius:14px;font-size:14px;line-height:1.5;display:none}.notice.show{display:block}.small{font-size:12px;color:var(--muted);line-height:1.5}.helper-card{background:#f8fbff;border:1px solid rgba(37,99,235,.12);border-radius:16px;padding:14px}.helper-title{font-size:13px;font-weight:800;color:#1e3a8a;margin:0 0 8px}.helper-text{margin:0;font-size:13px;color:#475569;line-height:1.6}@media (max-width:1120px){.layout{grid-template-columns:1fr}.intro h1{font-size:38px}}@media (max-width:720px){.container{width:min(100% - 20px,1280px)}.topbar-inner{height:auto;min-height:72px;padding:12px 0;align-items:flex-start;flex-direction:column}.intro h1{font-size:32px}.row-2,.tips{grid-template-columns:1fr}.preview-card{min-height:520px}.preview-header,.preview-footer,.tags-head{flex-direction:column;align-items:flex-start}.actions{flex-direction:column}.btn{width:100%}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <div class="brand-icon">✦</div>
+        <div>
+          <div class="brand-title">Insta Workflow</div>
+          <div class="brand-subtitle">Génération de visuels marketing et de #tags</div>
+        </div>
+      </div>
+      <div class="badge">Powered by Railway API</div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="container">
+      <div class="layout">
+        <section>
+          <div class="intro">
+            <h1>Créez vos visuels <span class="accent">marketing</span></h1>
+            <p>Le produit doit garder sa forme d’origine. L’IA sert à mettre en scène, pas à remodeler la prothèse.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <p class="card-header-title">Configuration</p>
+            </div>
+            <div class="card-body">
+              <div class="stack-lg">
+                <div id="errorBox" class="notice"></div>
+
+                <div class="field">
+                  <label class="label"><span class="icon">🖼️</span>Produit <span class="required">*</span></label>
+                  <label class="upload" id="productUpload">
+                    <input type="file" id="productImage" accept="image/*" />
+                    <div class="upload-inner" id="productUploadEmpty">
+                      <div class="upload-icon">⤴</div>
+                      <div class="upload-title">Importer l’image du produit</div>
+                      <div class="upload-subtitle">PNG, JPG, WEBP jusqu’à 6 MB</div>
+                    </div>
+                    <div class="file-preview" id="productPreview" style="display:none;">
+                      <img id="productThumb" class="thumb" alt="Produit" />
+                      <div class="file-meta">
+                        <p class="file-name">Image produit sélectionnée</p>
+                        <p class="file-hint">Cliquez pour changer le fichier</p>
+                      </div>
+                      <div class="ok">✔</div>
+                    </div>
+                  </label>
+                </div>
+
+                <div class="helper-card">
+                  <p class="helper-title">Mode recommandé</p>
+                  <p class="helper-text">Utilise de préférence un visuel déjà détouré ou sur fond très propre. Le backend est réglé pour demander explicitement à l’IA de conserver la géométrie exacte du produit.</p>
+                </div>
+
+                <div class="field">
+                  <label class="label"><span class="icon">✍</span>Nom du produit <span class="required">*</span></label>
+                  <input type="text" id="productName" placeholder="Ex : Stellite avec attachements type Vario et bridge CCM" />
+                </div>
+
+                <div class="separator"></div>
+
+                <div class="row-2">
+                  <div class="field">
+                    <label class="label"><span class="icon">🏷️</span>Logo</label>
+                    <label class="upload" id="logoUpload">
+                      <input type="file" id="logoImage" accept="image/*" />
+                      <div class="upload-inner" id="logoUploadEmpty" style="min-height:78px;">
+                        <div class="upload-title">Importer le logo</div>
+                        <div class="upload-subtitle">Optionnel</div>
+                      </div>
+                      <div class="file-preview" id="logoPreview" style="display:none;">
+                        <img id="logoThumb" class="thumb logo" alt="Logo" />
+                        <div class="file-meta">
+                          <p class="file-name">Logo sélectionné</p>
+                          <p class="file-hint">Cliquez pour changer le fichier</p>
+                        </div>
+                        <div class="ok">✔</div>
+                      </div>
+                    </label>
+                  </div>
+
+                  <div class="field">
+                    <label class="label"><span class="icon">📐</span>Format <span class="required">*</span></label>
+                    <select id="format">
+                      <option value="1:1">Carré (1:1)</option>
+                      <option value="4:5">Portrait Instagram (4:5)</option>
+                      <option value="9:16">Story / Reel (9:16)</option>
+                      <option value="16:9">Paysage (16:9)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="label"><span class="icon">✨</span>Message promotionnel</label>
+                  <input type="text" id="promoMessage" placeholder="Ex : -50% sur vos prothèses pendant 15 jours !" />
+                </div>
+
+                <div class="field">
+                  <label class="label"><span class="icon">🏥</span>Ambiance prédéfinie <span class="required">*</span></label>
+                  <select id="ambiancePreset">
+                    <option value="">Choisir une ambiance</option>
+                    <option value="La zone de traitement : fauteuil dentaire moderne, unité de soins complète, éclairage clinique, plateau d'instruments, écran d'affichage, ambiance professionnelle et haut de gamme.">1. Zone de traitement</option>
+                    <option value="L'accueil du cabinet : banque de réception moderne, zone d'attente confortable, documentation soignée, plantes discrètes, ambiance accueillante et premium.">2. Accueil et administration</option>
+                    <option value="Espace technique et stérilisation : autoclave, armoires de consommables, inox, surfaces impeccables, ambiance technique propre et rassurante.">3. Technique et stérilisation</option>
+                    <option value="Espace de consultation et formation : bureau de consultation, radiographie panoramique ou cone beam, ambiance pédagogique, claire et experte.">4. Formation et consultation</option>
+                    <option value="Espace équipe dentaire : salle de pause soignée, kitchenette, bureau du praticien, ambiance humaine, calme et professionnelle.">5. Équipe dentaire</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label class="label"><span class="icon">🎨</span>Champ libre ambiance <span class="required">*</span></label>
+                  <textarea id="ambianceFree" placeholder="Ajoute ici tes détails : lumière naturelle, lumière douce, style moderne et épuré, matériaux acier inoxydable, verre, bois, présence d'un dentiste, d'une assistante, etc."></textarea>
+                  <div class="small">Le backend combine l’ambiance prédéfinie et ton champ libre.</div>
+                </div>
+
+                <div class="row-2">
+                  <div class="field">
+                    <label class="label"><span class="icon">💡</span>Lumière</label>
+                    <select id="lightPreset">
+                      <option value="">Choisir la lumière</option>
+                      <option value="lumière naturelle, lumineuse et propre">Naturelle et lumineuse</option>
+                      <option value="lumière douce, apaisante et élégante">Douce et apaisante</option>
+                      <option value="lumière clinique nette, précise et professionnelle">Clinique et précise</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label class="label"><span class="icon">👥</span>Personnages</label>
+                    <select id="peoplePreset">
+                      <option value="">Aucun ou non précisé</option>
+                      <option value="sans personnage, uniquement le produit mis en scène">Sans personnage</option>
+                      <option value="avec un dentiste en arrière-plan, sobre et crédible">Dentiste</option>
+                      <option value="avec un dentiste et une assistante en arrière-plan, posture naturelle et professionnelle">Dentiste + assistante</option>
+                      <option value="avec patient et praticien, scène rassurante et élégante">Patient + praticien</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label class="label"><span class="icon">📝</span>Brief / contexte pour les #tags</label>
+                  <textarea id="tagsContext" placeholder="Ex : Publication Instagram pour un produit dentaire premium, laboratoire dentaire à Monaco, promotion temporaire, ton professionnel, innovation, esthétique, prothèse amovible..."></textarea>
+                </div>
+
+                <div class="actions">
+                  <button class="btn btn-primary btn-full" id="generateImageBtn"><span>⚡</span>Générer l’image</button>
+                  <button class="btn btn-secondary btn-full" id="generateTagsBtn"><span>#</span>Générer les #tags</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="preview-shell">
+          <div class="preview-card">
+            <div class="preview-header">
+              <div>
+                <h2 class="preview-title">Aperçu du visuel</h2>
+                <p class="preview-subtitle">Le produit doit conserver sa silhouette d’origine.</p>
+              </div>
+              <div class="badge" id="statusBadge">Prêt</div>
+            </div>
+
+            <div class="preview-body" id="previewBody">
+              <div class="empty-state" id="emptyState">
+                <div class="empty-state-icon">🖼️</div>
+                <h3>Votre visuel marketing n’attend plus que vous</h3>
+                <p>Choisissez une ambiance, ajoutez vos détails libres, puis générez un visuel en gardant la prothèse fidèle à la photo source.</p>
+              </div>
+
+              <div class="loading-wrap" id="loadingState" style="display:none;">
+                <div class="spinner"></div>
+                <h3>Génération en cours…</h3>
+                <p>L’API prépare votre visuel. Le prompt insiste sur la conservation de la forme exacte du produit.</p>
+              </div>
+
+              <img id="resultImage" class="result-image" alt="Résultat généré" style="display:none;" />
+            </div>
+
+            <div class="preview-footer">
+              <button class="btn btn-secondary" id="downloadBtn" disabled><span>⬇</span>Télécharger l’image</button>
+              <button class="btn btn-secondary" id="clearImageBtn" disabled><span>✕</span>Effacer le résultat</button>
+            </div>
+          </div>
+
+          <div class="tags-card">
+            <div class="tags-head">
+              <div>
+                <h3>Générateur de #tags</h3>
+                <p>Le contexte reprend le produit, la promo et l’ambiance finale.</p>
+              </div>
+              <div class="badge" id="tagsBadge">Aucun tag généré</div>
+            </div>
+            <div class="tags-body">
+              <div class="tags-output empty" id="tagsOutput">Les hashtags apparaîtront ici après génération.</div>
+              <div class="actions" style="margin-top:16px;">
+                <button class="btn btn-secondary" id="copyTagsBtn" disabled><span>📋</span>Copier les #tags</button>
+                <button class="btn btn-secondary" id="clearTagsBtn" disabled><span>✕</span>Effacer les #tags</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="tips">
+            <div class="tip"><div class="tip-icon">🎯</div><h4>Produit fidèle</h4><p>Le prompt demande explicitement de conserver la forme, les proportions, les bords et la géométrie du produit d’origine.</p></div>
+            <div class="tip"><div class="tip-icon">🏥</div><h4>Ambiances guidées</h4><p>Tu peux partir d’un décor de cabinet dentaire puis enrichir avec ton champ libre pour être beaucoup plus précis.</p></div>
+            <div class="tip"><div class="tip-icon">🚀</div><h4>Hashtags cohérents</h4><p>Les #tags se basent automatiquement sur le nom du produit, la promo et l’ambiance construite dans le formulaire.</p></div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const CONFIG = { API_BASE_URL: "https://insta-workflow-production.up.railway.app", API_TOKEN: "ZBOUBI_LAgrosse-chate1234585791=$$$" };
+    const els = { productImage: document.getElementById("productImage"), logoImage: document.getElementById("logoImage"), productName: document.getElementById("productName"), promoMessage: document.getElementById("promoMessage"), format: document.getElementById("format"), ambiancePreset: document.getElementById("ambiancePreset"), ambianceFree: document.getElementById("ambianceFree"), lightPreset: document.getElementById("lightPreset"), peoplePreset: document.getElementById("peoplePreset"), tagsContext: document.getElementById("tagsContext"), productUpload: document.getElementById("productUpload"), productUploadEmpty: document.getElementById("productUploadEmpty"), productPreview: document.getElementById("productPreview"), productThumb: document.getElementById("productThumb"), logoUpload: document.getElementById("logoUpload"), logoUploadEmpty: document.getElementById("logoUploadEmpty"), logoPreview: document.getElementById("logoPreview"), logoThumb: document.getElementById("logoThumb"), generateImageBtn: document.getElementById("generateImageBtn"), generateTagsBtn: document.getElementById("generateTagsBtn"), downloadBtn: document.getElementById("downloadBtn"), clearImageBtn: document.getElementById("clearImageBtn"), emptyState: document.getElementById("emptyState"), loadingState: document.getElementById("loadingState"), resultImage: document.getElementById("resultImage"), statusBadge: document.getElementById("statusBadge"), tagsOutput: document.getElementById("tagsOutput"), tagsBadge: document.getElementById("tagsBadge"), copyTagsBtn: document.getElementById("copyTagsBtn"), clearTagsBtn: document.getElementById("clearTagsBtn"), errorBox: document.getElementById("errorBox") };
+    const state = { productImageBase64: null, logoImageBase64: null, generatedImage: null, generatedTags: "" };
+    function setError(message){ if(!message){ els.errorBox.textContent=""; els.errorBox.classList.remove("show"); return; } els.errorBox.textContent=message; els.errorBox.classList.add("show"); }
+    function updateStatus(text){ els.statusBadge.textContent=text; }
+    function updateTagsBadge(text){ els.tagsBadge.textContent=text; }
+    function setLoading(isLoading){ els.generateImageBtn.disabled=isLoading; els.generateTagsBtn.disabled=isLoading; if(isLoading){ updateStatus("Génération en cours"); els.emptyState.style.display="none"; els.resultImage.style.display="none"; els.loadingState.style.display="flex"; } else { els.loadingState.style.display="none"; if(state.generatedImage){ els.resultImage.style.display="block"; els.emptyState.style.display="none"; updateStatus("Visuel généré"); } else { els.resultImage.style.display="none"; els.emptyState.style.display="flex"; updateStatus("Prêt"); } } }
+    function setTagsLoading(isLoading){ els.generateTagsBtn.disabled=isLoading; if(isLoading){ updateTagsBadge("Génération des #tags"); els.tagsOutput.classList.remove("empty"); els.tagsOutput.textContent="Génération des hashtags en cours…"; } else if(!state.generatedTags){ els.tagsOutput.classList.add("empty"); els.tagsOutput.textContent="Les hashtags apparaîtront ici après génération."; updateTagsBadge("Aucun tag généré"); } }
+    function fileToDataURL(file){ return new Promise((resolve,reject)=>{ const reader=new FileReader(); reader.onload=()=>resolve(reader.result); reader.onerror=reject; reader.readAsDataURL(file); }); }
+    function normalizeBase64Image(value){ if(!value || typeof value!=="string") return null; if(value.startsWith("data:image/")) return value; return "data:image/png;base64," + value; }
+    function sanitizeTags(raw){ if(Array.isArray(raw)){ return raw.map(v=>String(v).trim()).filter(Boolean).join(" "); } return String(raw||"").trim(); }
+    async function handleImageUpload(input,type){ setError(""); const file=input.files && input.files[0]; if(!file) return; if(file.size > 6*1024*1024){ setError("Le fichier est trop volumineux. Taille maximale : 6 MB."); input.value=""; return; } try{ const dataUrl=await fileToDataURL(file); if(type==="product"){ state.productImageBase64=dataUrl; els.productThumb.src=dataUrl; els.productUpload.classList.add("has-file"); els.productUploadEmpty.style.display="none"; els.productPreview.style.display="flex"; } else { state.logoImageBase64=dataUrl; els.logoThumb.src=dataUrl; els.logoUpload.classList.add("has-file"); els.logoUploadEmpty.style.display="none"; els.logoPreview.style.display="flex"; } } catch(err){ console.error(err); setError("Impossible de lire ce fichier image."); } }
+    function buildAmbianceText(){ return [els.ambiancePreset.value.trim(), els.ambianceFree.value.trim(), els.lightPreset.value.trim(), els.peoplePreset.value.trim()].filter(Boolean).join(". "); }
+    function validateImageForm(){ if(!state.productImageBase64){ setError("Veuillez importer l’image du produit."); return false; } if(!els.productName.value.trim()){ setError("Veuillez renseigner le nom du produit."); return false; } if(!buildAmbianceText()){ setError("Veuillez choisir ou écrire une ambiance."); return false; } return true; }
+    function buildTagsPrompt(){ return [els.productName.value.trim()?"Produit : "+els.productName.value.trim():"", els.promoMessage.value.trim()?"Message promotionnel : "+els.promoMessage.value.trim():"", buildAmbianceText()?"Ambiance : "+buildAmbianceText():"", els.tagsContext.value.trim()?"Contexte : "+els.tagsContext.value.trim():""].filter(Boolean).join("\n"); }
+    async function callApi(path,payload){ const response=await fetch(CONFIG.API_BASE_URL.replace(/\/+$/,"")+path,{ method:"POST", headers:{ "Content-Type":"application/json", "Authorization":"Bearer "+CONFIG.API_TOKEN }, body:JSON.stringify(payload) }); let data=null; try{ data=await response.json(); } catch(_){ data=null; } if(!response.ok){ throw new Error(data && data.error ? data.error : "Erreur API ("+response.status+")"); } return data; }
+    async function generateImage(){ setError(""); if(!validateImageForm()) return; setLoading(true); els.downloadBtn.disabled=true; els.clearImageBtn.disabled=true; try{ const payload={ productImage:state.productImageBase64, logoImage:state.logoImageBase64, productName:els.productName.value.trim(), promoMessage:els.promoMessage.value.trim(), ambiance:buildAmbianceText(), format:els.format.value, strictProductPreservation:true }; const data=await callApi("/api/generate-image",payload); const image=normalizeBase64Image(data.image); if(!image) throw new Error("La réponse image est vide ou invalide."); state.generatedImage=image; els.resultImage.src=image; els.resultImage.style.display="block"; els.emptyState.style.display="none"; updateStatus("Visuel généré"); els.downloadBtn.disabled=false; els.clearImageBtn.disabled=false; } catch(err){ console.error(err); state.generatedImage=null; els.resultImage.removeAttribute("src"); els.resultImage.style.display="none"; els.emptyState.style.display="flex"; updateStatus("Erreur"); setError(err.message || "Erreur lors de la génération de l’image."); } finally { setLoading(false); } }
+    async function generateTags(){ setError(""); const prompt=buildTagsPrompt(); if(!prompt.trim()){ setError("Ajoute au moins un contexte utile pour générer les #tags."); return; } setTagsLoading(true); els.copyTagsBtn.disabled=true; els.clearTagsBtn.disabled=true; try{ const data=await callApi("/api/generate-tags",{prompt}); const tags=sanitizeTags(data.tags); if(!tags) throw new Error("Aucun hashtag n’a été retourné par l’API."); state.generatedTags=tags; els.tagsOutput.classList.remove("empty"); els.tagsOutput.textContent=tags; updateTagsBadge("Tags générés"); els.copyTagsBtn.disabled=false; els.clearTagsBtn.disabled=false; } catch(err){ console.error(err); state.generatedTags=""; els.tagsOutput.classList.add("empty"); els.tagsOutput.textContent="Les hashtags apparaîtront ici après génération."; updateTagsBadge("Erreur"); setError(err.message || "Erreur lors de la génération des hashtags."); } finally { if(!state.generatedTags) setTagsLoading(false); } }
+    function downloadImage(){ if(!state.generatedImage) return; const link=document.createElement("a"); const safeName=(els.productName.value.trim()||"visuel").toLowerCase().replace(/[^a-z0-9]+/gi,"-").replace(/^-+|-+$/g,""); link.href=state.generatedImage; link.download="marketing-"+safeName+".png"; document.body.appendChild(link); link.click(); link.remove(); }
+    async function copyTags(){ if(!state.generatedTags) return; try{ await navigator.clipboard.writeText(state.generatedTags); updateTagsBadge("Tags copiés"); } catch(err){ console.error(err); setError("Impossible de copier automatiquement les hashtags."); } }
+    function clearImageResult(){ state.generatedImage=null; els.resultImage.removeAttribute("src"); els.resultImage.style.display="none"; els.emptyState.style.display="flex"; els.downloadBtn.disabled=true; els.clearImageBtn.disabled=true; updateStatus("Prêt"); }
+    function clearTagsResult(){ state.generatedTags=""; els.tagsOutput.classList.add("empty"); els.tagsOutput.textContent="Les hashtags apparaîtront ici après génération."; els.copyTagsBtn.disabled=true; els.clearTagsBtn.disabled=true; updateTagsBadge("Aucun tag généré"); }
+    els.productImage.addEventListener("change",function(){ handleImageUpload(this,"product"); });
+    els.logoImage.addEventListener("change",function(){ handleImageUpload(this,"logo"); });
+    els.generateImageBtn.addEventListener("click",generateImage);
+    els.generateTagsBtn.addEventListener("click",generateTags);
+    els.downloadBtn.addEventListener("click",downloadImage);
+    els.clearImageBtn.addEventListener("click",clearImageResult);
+    els.copyTagsBtn.addEventListener("click",copyTags);
+    els.clearTagsBtn.addEventListener("click",clearTagsResult);
+  </script>
+</body>
+</html>
