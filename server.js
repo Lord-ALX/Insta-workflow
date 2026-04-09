@@ -13,10 +13,6 @@ const CORS_ORIGIN = process.env.CORS_ORIGIN || "";
 const TEXT_MODEL = "gemini-2.5-flash";
 const IMAGE_MODEL = "gemini-2.5-flash-image";
 
-if (!GEMINI_API_KEY) {
-  console.warn("WARNING: GEMINI_API_KEY is missing.");
-}
-
 const ai = GEMINI_API_KEY ? new GoogleGenAI({ apiKey: GEMINI_API_KEY }) : null;
 
 app.set("trust proxy", 1);
@@ -55,70 +51,48 @@ app.use(
 
 function requireApiToken(req, res, next) {
   if (!API_TOKEN) {
-    return res.status(500).json({
-      error: "API_TOKEN manquant cote serveur."
-    });
+    return res.status(500).json({ error: "API_TOKEN manquant cote serveur." });
   }
-
   const authHeader = req.headers.authorization || "";
   const expected = `Bearer ${API_TOKEN}`;
-
   if (authHeader !== expected) {
-    return res.status(401).json({
-      error: "Token invalide."
-    });
+    return res.status(401).json({ error: "Token invalide." });
   }
-
   next();
 }
 
 function cleanDataUrl(dataUrl) {
   if (!dataUrl || typeof dataUrl !== "string") return null;
-
   const match = dataUrl.match(/^data:(.+?);base64,(.+)$/);
   if (!match) return null;
-
-  return {
-    mimeType: match[1],
-    data: match[2]
-  };
+  return { mimeType: match[1], data: match[2] };
 }
 
 function extractBase64FromGeminiResponse(response) {
   if (!response) return null;
-
   const candidates = response.candidates || [];
   for (const candidate of candidates) {
     const parts = candidate?.content?.parts || [];
     for (const part of parts) {
-      if (part?.inlineData?.data) {
-        return part.inlineData.data;
-      }
+      if (part?.inlineData?.data) return part.inlineData.data;
     }
   }
-
   return null;
 }
 
 function extractTextFromGeminiResponse(response) {
   if (!response) return "";
-
   if (typeof response.text === "string" && response.text.trim()) {
     return response.text.trim();
   }
-
   const candidates = response.candidates || [];
   for (const candidate of candidates) {
     const parts = candidate?.content?.parts || [];
     const texts = parts
       .map((part) => (typeof part?.text === "string" ? part.text : ""))
       .filter(Boolean);
-
-    if (texts.length) {
-      return texts.join("\n").trim();
-    }
+    if (texts.length) return texts.join("\n").trim();
   }
-
   return "";
 }
 
@@ -135,12 +109,9 @@ function normalizeHashtags(text) {
   for (let token of tokens) {
     token = token.replace(/^#+/, "");
     token = token.replace(/[^\p{L}\p{N}_]/gu, "");
-
     if (!token) continue;
-
     const hashtag = `#${token}`;
     const key = hashtag.toLowerCase();
-
     if (!seen.has(key)) {
       seen.add(key);
       cleaned.push(hashtag);
@@ -150,21 +121,12 @@ function normalizeHashtags(text) {
   return cleaned.join(" ");
 }
 
-function getRetryDelayMessage(error) {
-  const retryInfo = error?.details?.find(
-    (d) => d?.["@type"] === "type.googleapis.com/google.rpc.RetryInfo"
-  );
-
-  if (!retryInfo?.retryDelay) return "";
-  return ` Reessayez dans ${retryInfo.retryDelay}.`;
-}
-
 function isQuotaError(error) {
   return (
     error?.status === 429 ||
     error?.status === "RESOURCE_EXHAUSTED" ||
     String(error?.message || "").includes("RESOURCE_EXHAUSTED") ||
-    String(error?.message || "").includes("quota")
+    String(error?.message || "").toLowerCase().includes("quota")
   );
 }
 
@@ -181,17 +143,13 @@ app.get("/api/health", (req, res) => {
 app.post("/api/generate-tags", requireApiToken, async (req, res) => {
   try {
     if (!ai) {
-      return res.status(500).json({
-        error: "GEMINI_API_KEY manquant cote serveur."
-      });
+      return res.status(500).json({ error: "GEMINI_API_KEY manquant cote serveur." });
     }
 
     const { prompt } = req.body || {};
 
     if (!prompt || !String(prompt).trim()) {
-      return res.status(400).json({
-        error: "Prompt manquant."
-      });
+      return res.status(400).json({ error: "Prompt manquant." });
     }
 
     const systemPrompt = `
@@ -213,11 +171,7 @@ Contraintes :
       contents: [
         {
           role: "user",
-          parts: [
-            {
-              text: `${systemPrompt}\n\nContexte:\n${String(prompt).trim()}`
-            }
-          ]
+          parts: [{ text: `${systemPrompt}\n\nContexte:\n${String(prompt).trim()}` }]
         }
       ]
     });
@@ -226,26 +180,20 @@ Contraintes :
     const tags = normalizeHashtags(rawText);
 
     if (!tags) {
-      return res.status(500).json({
-        error: "Impossible de generer les hashtags."
-      });
+      return res.status(500).json({ error: "Impossible de generer les hashtags." });
     }
 
     return res.json({ tags });
   } catch (error) {
     console.error("Erreur /api/generate-tags :", error);
-    return res.status(500).json({
-      error: "Erreur lors de la generation des hashtags."
-    });
+    return res.status(500).json({ error: "Erreur lors de la generation des hashtags." });
   }
 });
 
 app.post("/api/generate-image", requireApiToken, async (req, res) => {
   try {
     if (!ai) {
-      return res.status(500).json({
-        error: "GEMINI_API_KEY manquant cote serveur."
-      });
+      return res.status(500).json({ error: "GEMINI_API_KEY manquant cote serveur." });
     }
 
     const {
@@ -254,7 +202,8 @@ app.post("/api/generate-image", requireApiToken, async (req, res) => {
       productName,
       promoMessage,
       ambiance,
-      format
+      format,
+      strictProductPreservation
     } = req.body || {};
 
     if (!productImage || !productName || !ambiance || !format) {
@@ -265,35 +214,50 @@ app.post("/api/generate-image", requireApiToken, async (req, res) => {
 
     const productInline = cleanDataUrl(productImage);
     if (!productInline) {
-      return res.status(400).json({
-        error: "Image produit invalide."
-      });
+      return res.status(400).json({ error: "Image produit invalide." });
     }
 
     let logoInline = null;
     if (logoImage) {
       logoInline = cleanDataUrl(logoImage);
       if (!logoInline) {
-        return res.status(400).json({
-          error: "Logo invalide."
-        });
+        return res.status(400).json({ error: "Logo invalide." });
       }
     }
 
     const ratioLabelMap = {
       "1:1": "carre 1:1",
-      "9:16": "portrait 9:16",
+      "4:5": "portrait instagram 4:5",
+      "9:16": "story verticale 9:16",
       "16:9": "paysage 16:9"
     };
 
     const formatLabel = ratioLabelMap[format] || format;
 
+    const preserveBlock = strictProductPreservation
+      ? `
+CONTRAINTE PRIORITAIRE ABSOLUE :
+- Le produit de la photo source doit etre conserve presque tel quel
+- Interdiction de modifier sa forme, sa silhouette, sa geometrie, ses proportions, son nombre d'elements, ses bords et son architecture
+- Interdiction de reinventer la prothese
+- Interdiction de changer la position des dents, l'arc, les attaches, le bridge, les volumes ou les contours
+- Tu peux seulement :
+  - detourer proprement le produit
+  - ameliorer legerement la nettete et l'integration
+  - ajuster ombres et lumiere
+  - le mettre en scene dans un decor
+- Le produit doit rester reconnaissable comme exactement la meme piece que sur la photo fournie
+- Si tu hesites entre embellir et respecter, tu dois respecter
+`
+      : "";
+
     const imagePrompt = `
 Cree un visuel marketing premium et realiste pour reseaux sociaux a partir de l'image produit fournie.
 
+${preserveBlock}
+
 Contraintes globales :
 - Respecter fidelement le produit fourni
-- Ne pas deformer le produit
 - Style visuel propre, haut de gamme, moderne
 - Qualite publicitaire professionnelle
 - Composition lisible et impactante
@@ -343,12 +307,7 @@ Objectif :
 
     const response = await ai.models.generateContent({
       model: IMAGE_MODEL,
-      contents: [
-        {
-          role: "user",
-          parts
-        }
-      ],
+      contents: [{ role: "user", parts }],
       config: {
         responseModalities: [Modality.TEXT, Modality.IMAGE]
       }
@@ -370,10 +329,7 @@ Objectif :
 
     if (isQuotaError(error)) {
       return res.status(429).json({
-        error:
-          "Quota Gemini image depasse ou indisponible pour ce projet." +
-          getRetryDelayMessage(error) +
-          " Verifiez la facturation, le tier Gemini du projet et les quotas du modele image."
+        error: "Quota Gemini image depasse ou indisponible pour ce projet."
       });
     }
 
@@ -385,9 +341,7 @@ Objectif :
 
 app.use((err, req, res, next) => {
   console.error("Erreur middleware :", err);
-  return res.status(500).json({
-    error: err?.message || "Erreur serveur."
-  });
+  return res.status(500).json({ error: err?.message || "Erreur serveur." });
 });
 
 app.listen(PORT, () => {
